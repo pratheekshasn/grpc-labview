@@ -22,7 +22,7 @@ namespace grpc_labview
         LStrHandle fieldName;
         LStrHandle embeddedMessage;
         int32_t protobufIndex;
-        int32_t type;
+        int32_t type; // Why is this not an enum?
         char isRepeated;
     };
 
@@ -618,6 +618,9 @@ LIBRARY_EXPORT int LVFieldInfo(FieldDescriptor* field, grpc_labview::MessageFiel
             break;
         case FieldDescriptor::TYPE_SINT64:
             info->type = 15;
+            break;
+        case FieldDescriptor::TYPE_ONEOF:
+            info->type = 17;
             break;
     }
     if (field->type() == FieldDescriptor::TYPE_MESSAGE)
