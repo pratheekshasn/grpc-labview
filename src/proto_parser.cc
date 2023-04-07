@@ -557,6 +557,10 @@ LIBRARY_EXPORT int LVGetFields(Descriptor* descriptor, grpc_labview::LV1DArrayHa
 
 std::string GetEnumNames(google::protobuf::EnumDescriptor* field);
 
+void SetFieldType(google::protobuf::FieldDescriptor* field, grpc_labview::MessageFieldCluster* info);
+
+void SetEmbeddedMessageNames(google::protobuf::FieldDescriptor* field, grpc_labview::MessageFieldCluster* info);
+
 //---------------------------------------------------------------------
 //---------------------------------------------------------------------
 LIBRARY_EXPORT int LVFieldInfo(FieldDescriptor* field, grpc_labview::MessageFieldCluster* info)
@@ -566,71 +570,8 @@ LIBRARY_EXPORT int LVFieldInfo(FieldDescriptor* field, grpc_labview::MessageFiel
         return -1;
     }
     int error = 0;
-    switch (field->type())
-    {
-        case FieldDescriptor::TYPE_DOUBLE:
-            info->type = 2;
-            break;
-        case FieldDescriptor::TYPE_FLOAT:
-            info->type = 1;
-            break;
-        case FieldDescriptor::TYPE_INT64:
-            info->type = 6;
-            break;
-        case FieldDescriptor::TYPE_UINT64:
-            info->type = 8;
-            break;
-        case FieldDescriptor::TYPE_INT32:
-            info->type = 0;
-            break;
-        case FieldDescriptor::TYPE_UINT32:
-            info->type = 7;
-            break;
-        case FieldDescriptor::TYPE_ENUM:
-            info->type = 9;
-            break;
-        case FieldDescriptor::TYPE_BOOL:
-            info->type = 3;
-            break;
-        case FieldDescriptor::TYPE_STRING:
-            info->type = 4;
-            break;
-        case FieldDescriptor::TYPE_BYTES:
-            info->type = 10;
-            break;
-        case FieldDescriptor::TYPE_MESSAGE:
-            info->type = 5;
-            break;
-        case FieldDescriptor::TYPE_FIXED64:
-            info->type = 11;
-            break;
-        case FieldDescriptor::TYPE_FIXED32:
-            info->type = 12;
-            break;
-        case FieldDescriptor::TYPE_SFIXED32:
-            info->type = 14;
-            break;
-        case FieldDescriptor::TYPE_SFIXED64:
-            info->type = 13;
-            break;
-        case FieldDescriptor::TYPE_SINT32:
-            info->type = 16;
-            break;
-        case FieldDescriptor::TYPE_SINT64:
-            info->type = 15;
-            break;
-        case FieldDescriptor::TYPE_ONEOF:
-            info->type = 17;
-            break;
-    }
-    if (field->type() == FieldDescriptor::TYPE_MESSAGE)
-    {
-        SetLVString(&info->embeddedMessage, grpc_labview::TransformMessageName(field->message_type()->full_name()));
-    }
-    if (field->type() == FieldDescriptor::TYPE_ENUM)
-    {
-        SetLVString(&info->embeddedMessage, grpc_labview::TransformMessageName(field->enum_type()->full_name()));
-    }
+    SetFieldType(field, info);
+    SetEmbeddedMessageNames(field, info);
     SetLVString(&info->fieldName, field->name());
     info->protobufIndex = field->number();
     info->isRepeated = field->is_repeated();
@@ -639,6 +580,77 @@ LIBRARY_EXPORT int LVFieldInfo(FieldDescriptor* field, grpc_labview::MessageFiel
         error = -2;
     }
     return error;
+}
+
+void SetEmbeddedMessageNames(google::protobuf::FieldDescriptor* field, grpc_labview::MessageFieldCluster* info)
+{
+    if (field->type() == FieldDescriptor::TYPE_MESSAGE)
+    {
+        SetLVString(&info->embeddedMessage, grpc_labview::TransformMessageName(field->message_type()->full_name()));
+    }
+    if (field->type() == FieldDescriptor::TYPE_ENUM)
+    {
+        SetLVString(&info->embeddedMessage, grpc_labview::TransformMessageName(field->enum_type()->full_name()));
+    }
+}
+
+void SetFieldType(google::protobuf::FieldDescriptor* field, grpc_labview::MessageFieldCluster* info)
+{
+
+    switch (field->type())
+    {
+    case FieldDescriptor::TYPE_DOUBLE:
+        info->type = 2;
+        break;
+    case FieldDescriptor::TYPE_FLOAT:
+        info->type = 1;
+        break;
+    case FieldDescriptor::TYPE_INT64:
+        info->type = 6;
+        break;
+    case FieldDescriptor::TYPE_UINT64:
+        info->type = 8;
+        break;
+    case FieldDescriptor::TYPE_INT32:
+        info->type = 0;
+        break;
+    case FieldDescriptor::TYPE_UINT32:
+        info->type = 7;
+        break;
+    case FieldDescriptor::TYPE_ENUM:
+        info->type = 9;
+        break;
+    case FieldDescriptor::TYPE_BOOL:
+        info->type = 3;
+        break;
+    case FieldDescriptor::TYPE_STRING:
+        info->type = 4;
+        break;
+    case FieldDescriptor::TYPE_BYTES:
+        info->type = 10;
+        break;
+    case FieldDescriptor::TYPE_MESSAGE:
+        info->type = 5;
+        break;
+    case FieldDescriptor::TYPE_FIXED64:
+        info->type = 11;
+        break;
+    case FieldDescriptor::TYPE_FIXED32:
+        info->type = 12;
+        break;
+    case FieldDescriptor::TYPE_SFIXED32:
+        info->type = 14;
+        break;
+    case FieldDescriptor::TYPE_SFIXED64:
+        info->type = 13;
+        break;
+    case FieldDescriptor::TYPE_SINT32:
+        info->type = 16;
+        break;
+    case FieldDescriptor::TYPE_SINT64:
+        info->type = 15;
+        break;
+    }
 }
 
 LIBRARY_EXPORT int GetEnumInfo(EnumDescriptor* enumDescriptor, grpc_labview::EnumFieldCluster* info)
