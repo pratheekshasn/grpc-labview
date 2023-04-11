@@ -263,6 +263,7 @@
 		<Item Name="Project Settings.ctl" Type="VI" URL="../TypeDefs/Project Settings.ctl"/>
 		<Item Name="RPC Method Types.ctl" Type="VI" URL="../TypeDefs/RPC Method Types.ctl"/>
 		<Item Name="Enum Metadata (Scripting).ctl" Type="VI" URL="../TypeDefs/Enum Metadata (Scripting).ctl"/>
+		<Item Name="Oneof Metadata.ctl" Type="VI" URL="../TypeDefs/Oneof Metadata.ctl"/>
 	</Item>
 	<Item Name="Proto Parser API" Type="Folder">
 		<Item Name="Proto Parser.vi" Type="VI" URL="../Proto Parser API/Proto Parser.vi"/>
@@ -284,6 +285,7 @@
 		<Item Name="Get Message Parameters.vi" Type="VI" URL="../Proto Parser API/LabVIEW API/Get Message Parameters.vi"/>
 		<Item Name="Get gRPC Method FullName.vi" Type="VI" URL="../Proto Parser API/LabVIEW API/Get gRPC Method FullName.vi"/>
 		<Item Name="Get ProtoFile Messages.vi" Type="VI" URL="../Proto Parser API/LabVIEW API/Get ProtoFile Messages.vi"/>
+		<Item Name="Get ProtoFile Oneofs.vi" Type="VI" URL="../Proto Parser API/LabVIEW API/Get ProtoFile Oneofs.vi"/>
 		<Item Name="Translate gRPC Method FullName.vi" Type="VI" URL="../Proto Parser API/LabVIEW API/Translate gRPC Method FullName.vi"/>
 		<Item Name="Get Message TypeUrl.vi" Type="VI" URL="../Proto Parser API/LabVIEW API/Get Message TypeUrl.vi"/>
 		<Item Name="Group Services.vi" Type="VI" URL="../Proto Parser API/LabVIEW API/Group Services.vi"/>
@@ -298,6 +300,8 @@
 		<Item Name="Create Message Metadata.vi" Type="VI" URL="../Proto Parser API/LabVIEW API/Create Message Metadata.vi"/>
 		<Item Name="Create Types.vi" Type="VI" URL="../Proto Parser API/LabVIEW API/Create Types.vi"/>
 		<Item Name="Create Methods.vi" Type="VI" URL="../Proto Parser API/LabVIEW API/Create Methods.vi"/>
+		<Item Name="Get Oneof Field Info.vi" Type="VI" URL="../Proto Parser API/LabVIEW API/Get Oneof Field Info.vi"/>
+		<Item Name="Create Oneof Metadata.vi" Type="VI" URL="../Proto Parser API/LabVIEW API/Create Oneof Metadata.vi"/>
 		<Item Name="Create Method Metadata.vi" Type="VI" URL="../Proto Parser API/LabVIEW API/Create Method Metadata.vi"/>
 	</Item>
 	<Item Name="Animation API" Type="Folder">

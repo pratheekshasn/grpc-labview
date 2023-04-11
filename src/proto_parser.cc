@@ -34,6 +34,14 @@ namespace grpc_labview
         LStrHandle enumValues;
         char isAliasAllowed;
     };
+
+    struct OneofCluster
+    {
+        int32_t version;
+        LStrHandle name;
+        std::list<MessageFieldCluster> fieldsInOneof;
+        LStrHandle selectedField;
+    };
     #ifdef _PS_4
     #pragma pack (pop)
     #endif
@@ -378,6 +386,59 @@ LIBRARY_EXPORT int LVGetEnums(grpc_labview::LVProtoParser* parser, grpc_labview:
     return 0;
 }
 
+void AddOneofsInMessages(grpc_labview::LV1DArrayHandle* messages, std::set<const google::protobuf::OneofDescriptor*>& allOneofs)
+{
+    // Read messages sent from LV layer. These are the messages already collected
+    // by the LV layer during the parsing of the proto file.
+    std::set<const google::protobuf::Descriptor*> allMessages;
+    const Descriptor** messageElements = (**messages)->bytes<const Descriptor*>();
+    for (int i = 0; i < (**messages)->cnt; i++)
+    {
+        allMessages.emplace(messageElements[i]);
+    }
+
+    // Get oneofs nested within each message.
+    for (auto& message : allMessages)
+    {
+        int oneofCount = message->real_oneof_decl_count();
+        for (int i = 0; i < oneofCount; i++)
+        {
+            auto current = message->oneof_decl(i);
+            allOneofs.emplace(current);
+        }
+    }
+}
+
+LIBRARY_EXPORT int LVGetOneofs(grpc_labview::LVProtoParser* parser, grpc_labview::LV1DArrayHandle* messages, grpc_labview::LV1DArrayHandle* oneofs)
+{
+    if (parser == nullptr)
+    {
+        return -1;
+    }
+    if (parser->m_FileDescriptor == nullptr)
+    {
+        return -2;
+    }
+
+    std::set<const google::protobuf::OneofDescriptor*> allOneofs;
+    AddOneofsInMessages(messages, allOneofs);
+
+    auto count = allOneofs.size();
+    if (grpc_labview::NumericArrayResize(0x08, 1, oneofs, count * sizeof(OneofDescriptor*)) != 0)
+    {
+        return -3;
+    }
+    (**oneofs)->cnt = count;
+    const OneofDescriptor** oneofDescriptors = (**oneofs)->bytes<const OneofDescriptor*>();
+    int x = 0;
+    for (auto& it : allOneofs)
+    {
+        oneofDescriptors[x] = it;
+        x += 1;
+    }
+    return 0;
+}
+
 //---------------------------------------------------------------------
 //---------------------------------------------------------------------
 LIBRARY_EXPORT int LVGetServiceName(ServiceDescriptor* service, grpc_labview::LStrHandle* name)
@@ -665,6 +726,30 @@ LIBRARY_EXPORT int GetEnumInfo(EnumDescriptor* enumDescriptor, grpc_labview::Enu
     SetLVString(&info->enumValues, GetEnumNames(enumDescriptor));
     info->isAliasAllowed = (enumDescriptor->options().has_allow_alias() && enumDescriptor->options().allow_alias());
     
+    return 0;
+}
+
+LIBRARY_EXPORT int GetOneofInfo(OneofDescriptor* oneofDescriptor, grpc_labview::OneofCluster* info)
+{
+    if (oneofDescriptor == nullptr)
+    {
+        return -1;
+    }
+
+    SetLVString(&info->name, grpc_labview::TransformMessageName(oneofDescriptor->full_name()));
+    //SetLVString(&info->typeUrl, oneofDescriptor->full_name());
+    
+    // Set fields of oneof
+    int fieldCount = oneofDescriptor->field_count();
+    for (int i = 0; i < fieldCount; i++)
+    {
+        auto field = oneofDescriptor->field(i);
+        //allOneofs.emplace(current);
+        grpc_labview::MessageFieldCluster* fieldCluster;
+        LVFieldInfo(const_cast<FieldDescriptor*>(field), fieldCluster);
+        (info->fieldsInOneof).push_back(*fieldCluster);
+    }
+
     return 0;
 }
 
