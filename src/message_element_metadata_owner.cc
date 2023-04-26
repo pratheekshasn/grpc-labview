@@ -81,6 +81,15 @@ namespace grpc_labview {
         _registeredEnumMetadata.insert({ metadata->messageName, metadata });
     }
 
+    ////---------------------------------------------------------------------
+    ////---------------------------------------------------------------------
+    //void MessageElementMetadataOwner::RegisterMetadata(std::shared_ptr<OneofMetadata> metadata)
+    //{
+    //    std::lock_guard<std::mutex> lock(_mutex);
+
+    //    _registeredOneofMetadata.insert({ metadata->messageName, metadata });
+    //}
+
     //---------------------------------------------------------------------
     //---------------------------------------------------------------------
     std::shared_ptr<MessageMetadata> MessageElementMetadataOwner::FindMetadata(const std::string& name)
@@ -104,6 +113,18 @@ namespace grpc_labview {
         }
         return nullptr;
     }
+
+    ////---------------------------------------------------------------------
+    ////---------------------------------------------------------------------
+    //std::shared_ptr<OneofMetadata> MessageElementMetadataOwner::FindOneofMetadata(const std::string& name)
+    //{
+    //    auto it = _registeredOneofMetadata.find(name);
+    //    if (it != _registeredOneofMetadata.end())
+    //    {
+    //        return (*it).second;
+    //    }
+    //    return nullptr;
+    //}
 
     //---------------------------------------------------------------------
     //---------------------------------------------------------------------

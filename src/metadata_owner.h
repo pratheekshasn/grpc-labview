@@ -33,6 +33,7 @@ namespace grpc_labview
         std::mutex _mutex;
         std::map<std::string, std::shared_ptr<MessageMetadata>> _registeredMessageMetadata;
         std::map<std::string, std::shared_ptr<EnumMetadata>> _registeredEnumMetadata;
+        //std::map<std::string, std::shared_ptr<OneofMetadata>> _registeredOneofMetadata;
         void UpdateMetadataClusterLayout(std::shared_ptr<MessageMetadata>& metadata);
     };
 }

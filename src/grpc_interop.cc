@@ -54,6 +54,7 @@ namespace grpc_labview
             {
                 auto element = std::make_shared<MessageElementMetadata>(metadataOwner);
                 element->embeddedMessageName = GetLVString(lvElement->embeddedMessageName);
+                element->fieldName = GetLVString(lvElement->fieldName);
                 element->protobufIndex = lvElement->protobufIndex;
                 element->type = (LVMessageMetadataType)lvElement->valueType;
                 element->isRepeated = lvElement->isRepeated;
@@ -180,6 +181,33 @@ namespace grpc_labview
         enumMetadata->ProtoEnumToLVEnum = CreateMapBetweenProtoEnumAndLVEnumvalues(enumMetadata->elements);
 
         return enumMetadata;
+    }
+
+    std::shared_ptr<OneofMetadata> CreateOneofMetadata2(IMessageElementMetadataOwner* metadataOwner, LVOneofMetadata2* lvMetadata)
+    {
+        std::shared_ptr<OneofMetadata> oneofMetadata(new OneofMetadata());
+
+        oneofMetadata->messageName = GetLVString(lvMetadata->messageName);
+        oneofMetadata->typeUrl = GetLVString(lvMetadata->typeUrl);
+        //oneofMetadata->elements = GetLVString(lvMetadata->elements);
+
+        if (lvMetadata->elements != nullptr)
+        {
+            // byteAlignment for LVMesageElementMetadata would be the size of its largest element which is a LStrHandle
+            auto lvElement = (LVMesageElementMetadata*)(*lvMetadata->elements)->bytes(0, sizeof(LStrHandle));
+            for (int x = 0; x < (*lvMetadata->elements)->cnt; ++x, ++lvElement)
+            {
+                auto element = std::make_shared<MessageElementMetadata>(metadataOwner);
+                element->embeddedMessageName = GetLVString(lvElement->embeddedMessageName);
+                element->fieldName = GetLVString(lvElement->fieldName);
+                element->protobufIndex = lvElement->protobufIndex;
+                element->type = (LVMessageMetadataType)lvElement->valueType;
+                oneofMetadata->_elements.push_back(element);
+                //oneofMetadata->_mappedElements.emplace(element->protobufIndex, element);
+            }
+        }
+
+        return oneofMetadata;
     }
 }
 
@@ -453,4 +481,32 @@ LIBRARY_EXPORT int32_t IsCancelled(grpc_labview::gRPCid** id)
         return -1;
     }
     return data->_call->IsCancelled();
+}
+
+//---------------------------------------------------------------------
+//---------------------------------------------------------------------
+LIBRARY_EXPORT int32_t SetOneofData(grpc_labview::gRPCid** id, int8_t* lvRequest)
+{
+    auto data = (*id)->CastTo<grpc_labview::GenericMethodData>();
+    if (data == nullptr)
+    {
+        return -1;
+    }
+    try
+    {
+        grpc_labview::ClusterDataCopier::CopyFromCluster(*data->_response, lvRequest);
+    }
+    catch (grpc_labview::InvalidEnumValueException& e)
+    {
+        return e.code;
+    }
+    if (data->_call->IsCancelled())
+    {
+        return -(1000 + grpc::StatusCode::CANCELLED);
+    }
+    if (!data->_call->IsActive() || !data->_call->Write())
+    {
+        return -2;
+    }
+    return 0;    
 }

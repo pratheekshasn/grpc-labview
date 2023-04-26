@@ -633,7 +633,7 @@ LIBRARY_EXPORT int LVFieldInfo(FieldDescriptor* field, grpc_labview::MessageFiel
     int error = 0;
     SetFieldType(field, info);
     SetEmbeddedMessageNames(field, info);
-    SetLVString(&info->fieldName, field->name());
+    SetLVString(&(info->fieldName), field->name());
     info->protobufIndex = field->number();
     info->isRepeated = field->is_repeated();
     if (info->type == 99)
@@ -657,7 +657,6 @@ void SetEmbeddedMessageNames(google::protobuf::FieldDescriptor* field, grpc_labv
 
 void SetFieldType(google::protobuf::FieldDescriptor* field, grpc_labview::MessageFieldCluster* info)
 {
-
     switch (field->type())
     {
     case FieldDescriptor::TYPE_DOUBLE:
@@ -737,19 +736,27 @@ LIBRARY_EXPORT int GetOneofInfo(OneofDescriptor* oneofDescriptor, grpc_labview::
     }
 
     SetLVString(&info->name, grpc_labview::TransformMessageName(oneofDescriptor->full_name()));
-    //SetLVString(&info->typeUrl, oneofDescriptor->full_name());
-    
-    // Set fields of oneof
-    int fieldCount = oneofDescriptor->field_count();
-    for (int i = 0; i < fieldCount; i++)
-    {
-        auto field = oneofDescriptor->field(i);
-        //allOneofs.emplace(current);
-        grpc_labview::MessageFieldCluster* fieldCluster;
-        LVFieldInfo(const_cast<FieldDescriptor*>(field), fieldCluster);
-        (info->fieldsInOneof).push_back(*fieldCluster);
-    }
 
+    return 0;
+}
+
+LIBRARY_EXPORT int GetOneofFields(OneofDescriptor* descriptor, grpc_labview::LV1DArrayHandle* fields) // OneofDescriptor* oneofDescriptor, grpc_labview::OneofCluster* info)
+{
+    if (descriptor == nullptr)
+    {
+        return -1;
+    }
+    auto count = descriptor->field_count();
+    if (NumericArrayResize(0x08, 1, fields, count * sizeof(FieldDescriptor*)) != 0)
+    {
+        return -3;
+    }
+    (**fields)->cnt = count;
+    auto fieldElements = (**fields)->bytes<const FieldDescriptor*>();
+    for (int x = 0; x < count; ++x)
+    {
+        fieldElements[x] = descriptor->field(x);
+    }
     return 0;
 }
 

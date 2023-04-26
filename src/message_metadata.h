@@ -55,7 +55,9 @@ namespace grpc_labview
         int protobufIndex;
         int clusterOffset;
         LVMessageMetadataType type;    
-        bool isRepeated;    
+        bool isRepeated;
+        bool isOneof;
+        std::string fieldName;
     };
 
     //---------------------------------------------------------------------
@@ -69,6 +71,7 @@ namespace grpc_labview
         int protobufIndex;
         int valueType;
         bool isRepeated;
+        LStrHandle fieldName;
     };
     #ifdef _PS_4
     #pragma pack (pop)

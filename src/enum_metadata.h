@@ -65,4 +65,32 @@ namespace grpc_labview
         LStrHandle elements;
         bool allowAlias;
     };
+
+    //---------------------------------------------------------------------
+    //---------------------------------------------------------------------
+    struct LVOneofMetadata2 // TODO: Move to a different file.
+    {
+        int version;
+        LStrHandle messageName;
+        LStrHandle typeUrl;
+        LV1DArrayHandle elements;
+    };
+
+    //---------------------------------------------------------------------
+    //---------------------------------------------------------------------
+    struct OneofMetadata
+    {
+    public:
+        OneofMetadata() :
+            clusterSize(0)
+        {
+        }
+
+    public:
+        std::string messageName;
+        std::string typeUrl;
+        int clusterSize;
+        int alignmentRequirement;
+        LVMessageMetadataList _elements;
+    };
 }

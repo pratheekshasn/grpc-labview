@@ -303,6 +303,7 @@
 		<Item Name="Get Oneof Field Info.vi" Type="VI" URL="../Proto Parser API/LabVIEW API/Get Oneof Field Info.vi"/>
 		<Item Name="Create Oneof Metadata.vi" Type="VI" URL="../Proto Parser API/LabVIEW API/Create Oneof Metadata.vi"/>
 		<Item Name="Create Method Metadata.vi" Type="VI" URL="../Proto Parser API/LabVIEW API/Create Method Metadata.vi"/>
+		<Item Name="Get Oneof Fields.vi" Type="VI" URL="../Proto Parser API/LabVIEW API/Get Oneof Fields.vi"/>
 	</Item>
 	<Item Name="Animation API" Type="Folder">
 		<Item Name="Animation.vi" Type="VI" URL="../Animation API/Animation.vi"/>

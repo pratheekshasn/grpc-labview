@@ -90,6 +90,9 @@ namespace grpc_labview {
         for (auto val : message._metadata->_mappedElements)
         {
             auto start = cluster + val.second->clusterOffset;
+
+            // Since oneof fields get listed along with regular fields while parsing the proto file, check if the field being copied now is part of a oneof. If it is, then all of the other fields inside the oneof needs to be cleared.
+            //auto field = FindOneofByName(val.second->fieldName);
             switch (val.second->type)
             {
             case LVMessageMetadataType::StringValue:
