@@ -67,6 +67,10 @@ namespace grpc_labview
         std::shared_ptr<EnumMetadata> FindEnumMetadata(const std::string& name) {
             return nullptr;
         };
+        std::shared_ptr<OneofMetadata> FindOneofMetadata(const std::string& name)
+        {
+            return nullptr;
+        };
 
     public:
         CallData* _call;
@@ -146,6 +150,10 @@ namespace grpc_labview
         CallData(LabVIEWgRPCServer* server, grpc::AsyncGenericService* service, grpc::ServerCompletionQueue* cq);
         std::shared_ptr<MessageMetadata> FindMetadata(const std::string& name) override;
         std::shared_ptr<EnumMetadata> FindEnumMetadata(const std::string& name) {
+            return nullptr;
+        }
+        std::shared_ptr<OneofMetadata> FindOneofMetadata(const std::string& name)
+        {
             return nullptr;
         }
         void Proceed(bool ok) override;

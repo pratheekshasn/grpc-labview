@@ -81,14 +81,14 @@ namespace grpc_labview {
         _registeredEnumMetadata.insert({ metadata->messageName, metadata });
     }
 
-    ////---------------------------------------------------------------------
-    ////---------------------------------------------------------------------
-    //void MessageElementMetadataOwner::RegisterMetadata(std::shared_ptr<OneofMetadata> metadata)
-    //{
-    //    std::lock_guard<std::mutex> lock(_mutex);
+    //---------------------------------------------------------------------
+    //---------------------------------------------------------------------
+    void MessageElementMetadataOwner::RegisterMetadata(std::shared_ptr<OneofMetadata> metadata)
+    {
+        std::lock_guard<std::mutex> lock(_mutex);
 
-    //    _registeredOneofMetadata.insert({ metadata->messageName, metadata });
-    //}
+        _registeredOneofMetadata.insert({ metadata->messageName, metadata });
+    }
 
     //---------------------------------------------------------------------
     //---------------------------------------------------------------------
@@ -114,17 +114,17 @@ namespace grpc_labview {
         return nullptr;
     }
 
-    ////---------------------------------------------------------------------
-    ////---------------------------------------------------------------------
-    //std::shared_ptr<OneofMetadata> MessageElementMetadataOwner::FindOneofMetadata(const std::string& name)
-    //{
-    //    auto it = _registeredOneofMetadata.find(name);
-    //    if (it != _registeredOneofMetadata.end())
-    //    {
-    //        return (*it).second;
-    //    }
-    //    return nullptr;
-    //}
+    //---------------------------------------------------------------------
+    //---------------------------------------------------------------------
+    std::shared_ptr<OneofMetadata> MessageElementMetadataOwner::FindOneofMetadata(const std::string& name)
+    {
+        auto it = _registeredOneofMetadata.find(name);
+        if (it != _registeredOneofMetadata.end())
+        {
+            return (*it).second;
+        }
+        return nullptr;
+    }
 
     //---------------------------------------------------------------------
     //---------------------------------------------------------------------

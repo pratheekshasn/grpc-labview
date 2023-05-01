@@ -65,5 +65,9 @@ namespace grpc_labview
         static void CopyFixed64FromCluster(const std::shared_ptr<MessageElementMetadata> metadata, int8_t* start, LVMessage& message);
         static void CopySFixed32FromCluster(const std::shared_ptr<MessageElementMetadata> metadata, int8_t* start, LVMessage& message);
         static void CopySFixed64FromCluster(const std::shared_ptr<MessageElementMetadata> metadata, int8_t* start, LVMessage& message);
+
+        static void ClearStringFromCluster(const std::shared_ptr<MessageElementMetadata> metadata, int8_t* start, LVMessage& message);
+        static void ClearFromCluster(LVMessage& message, int8_t* cluster);
+        static void SetOneofSelectedField(std::string fieldName, std::shared_ptr<OneofMetadata> oneofMetadata);
     };
 }

@@ -4,6 +4,7 @@
 
 #include <list>
 #include <exceptions.h>
+#include <message_metadata.h>
 
 namespace grpc_labview
 {
@@ -92,5 +93,14 @@ namespace grpc_labview
         int clusterSize;
         int alignmentRequirement;
         LVMessageMetadataList _elements;
+        std::string setField;
+
+        /*void ClearOtherFieldValues(std::string setField)
+        {
+            for (auto field : _elements)
+            {
+
+            }
+        }*/
     };
 }

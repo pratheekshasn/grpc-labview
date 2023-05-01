@@ -202,7 +202,7 @@ namespace grpc_labview
                 element->fieldName = GetLVString(lvElement->fieldName);
                 element->protobufIndex = lvElement->protobufIndex;
                 element->type = (LVMessageMetadataType)lvElement->valueType;
-                oneofMetadata->_elements.push_back(element);
+                oneofMetadata->_elements.insert(oneofMetadata->_elements.end(), element); // push_back(element);
                 //oneofMetadata->_mappedElements.emplace(element->protobufIndex, element);
             }
         }

@@ -80,6 +80,82 @@ namespace grpc_labview {
             }
         }
     }
+    
+    void ClusterDataCopier::SetOneofSelectedField(std::string fieldName, std::shared_ptr<OneofMetadata> oneofMetadata)
+    {
+        oneofMetadata->setField = fieldName;
+        //oneofMetadata->ClearOtherFieldValues(fieldName);
+
+        /*for (auto field : oneofMetadata->_elements)
+        {
+            ClearFromCluster(fieldName)
+        }*/
+
+    }
+
+    void ClusterDataCopier::ClearFromCluster(LVMessage& message, int8_t* cluster)
+    {
+        message._values.clear();
+
+        for (auto val : message._metadata->_mappedElements)
+        {
+            auto start = cluster + val.second->clusterOffset;
+
+            switch (val.second->type)
+            {
+            case LVMessageMetadataType::StringValue:
+                ClearStringFromCluster(val.second, start, message);
+                break;
+            /*case LVMessageMetadataType::BytesValue:
+                ClearBytesFromCluster(val.second, start, message);
+                break;
+            case LVMessageMetadataType::BoolValue:
+                ClearBoolFromCluster(val.second, start, message);
+                break;
+            case LVMessageMetadataType::DoubleValue:
+                ClearDoubleFromCluster(val.second, start, message);
+                break;
+            case LVMessageMetadataType::FloatValue:
+                ClearFloatFromCluster(val.second, start, message);
+                break;
+            case LVMessageMetadataType::Int32Value:
+                ClearInt32FromCluster(val.second, start, message);
+                break;
+            case LVMessageMetadataType::MessageValue:
+                ClearMessageFromCluster(val.second, start, message);
+                break;
+            case LVMessageMetadataType::Int64Value:
+                ClearInt64FromCluster(val.second, start, message);
+                break;
+            case LVMessageMetadataType::UInt32Value:
+                ClearUInt32FromCluster(val.second, start, message);
+                break;
+            case LVMessageMetadataType::UInt64Value:
+                ClearUInt64FromCluster(val.second, start, message);
+                break;
+            case LVMessageMetadataType::EnumValue:
+                ClearEnumFromCluster(val.second, start, message);
+                break;
+            case LVMessageMetadataType::SInt32Value:
+                ClearSInt32FromCluster(val.second, start, message);
+                break;
+            case LVMessageMetadataType::SInt64Value:
+                ClearSInt64FromCluster(val.second, start, message);
+                break;
+            case LVMessageMetadataType::Fixed32Value:
+                ClearFixed32FromCluster(val.second, start, message);
+            case LVMessageMetadataType::Fixed64Value:
+                ClearFixed64FromCluster(val.second, start, message);
+                break;
+            case LVMessageMetadataType::SFixed32Value:
+                ClearSFixed32FromCluster(val.second, start, message);
+                break;
+            case LVMessageMetadataType::SFixed64Value:
+                ClearSFixed64FromCluster(val.second, start, message);
+                break;*/
+            }
+        }
+    }
 
     //---------------------------------------------------------------------
     //---------------------------------------------------------------------
@@ -92,7 +168,15 @@ namespace grpc_labview {
             auto start = cluster + val.second->clusterOffset;
 
             // Since oneof fields get listed along with regular fields while parsing the proto file, check if the field being copied now is part of a oneof. If it is, then all of the other fields inside the oneof needs to be cleared.
-            //auto field = FindOneofByName(val.second->fieldName);
+            std::shared_ptr<OneofMetadata> oneof = val.second->_owner->FindOneofMetadata(val.second->fieldName);
+            if (oneof != nullptr)
+            {
+                // Go clear the fields of the oneof.
+                // Also set the selected field value of the oneof.
+                SetOneofSelectedField(val.second->fieldName, oneof);
+
+                ClearFromCluster(message, cluster);
+            }
             switch (val.second->type)
             {
             case LVMessageMetadataType::StringValue:
@@ -641,6 +725,38 @@ namespace grpc_labview {
             auto stringValue = std::make_shared<LVStringMessageValue>(metadata->protobufIndex, str);
             message._values.emplace(metadata->protobufIndex, stringValue);
         }
+    }
+
+    //---------------------------------------------------------------------
+    //---------------------------------------------------------------------
+    void ClusterDataCopier::ClearStringFromCluster(const std::shared_ptr<MessageElementMetadata> metadata, int8_t* start, LVMessage& message)
+    {
+        /*if (metadata->isRepeated)
+        {
+            auto array = *(LV1DArrayHandle*)start;
+            if (array && *array && ((*array)->cnt != 0))
+            {
+                auto repeatedStringValue = std::make_shared<LVRepeatedStringMessageValue>(metadata->protobufIndex);
+                message._values.emplace(metadata->protobufIndex, repeatedStringValue);
+                auto lvStr = (*array)->bytes<LStrHandle>();
+                for (int x = 0; x < (*array)->cnt; ++x)
+                {
+                    auto str = GetLVString(*lvStr);
+                    repeatedStringValue->_value.Add(str);
+                    lvStr += 1;
+                }
+            }
+        }
+        else
+        {
+            auto str = GetLVString(*(LStrHandle*)start);
+            auto stringValue = std::make_shared<LVStringMessageValue>(metadata->protobufIndex, str);
+            message._values.emplace(metadata->protobufIndex, stringValue);
+        }*/
+
+        auto str = GetLVString(nullptr);
+        auto stringValue = std::make_shared<LVStringMessageValue>(metadata->protobufIndex, str);
+        message._values.emplace(metadata->protobufIndex, stringValue);
     }
 
     //---------------------------------------------------------------------
